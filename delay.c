@@ -1,7 +1,7 @@
 /*
  * delay.c
- *
- * Starter Code
+ * 
+ * Delay functions for embedded programming.
  */
 
 #include <inttypes.h>
