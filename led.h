@@ -1,8 +1,10 @@
 /*
- * LED.H Starter Code
+ * led.h 
+ * 
+ * API for interfacing with the MSOE dev board LEDs
  */
 
-//Include Guards (More to come)
+//Include Guards 
 #ifndef LED_H_
 #define LED_H_
 

@@ -1,7 +1,7 @@
 /*
  * delay.h
  *
- * Starter code
+ * Interface for delay functions used in embedded programming.
  */
 
 //include guards
