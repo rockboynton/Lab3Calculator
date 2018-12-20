@@ -10,8 +10,6 @@
 
 #include <inttypes.h>
 
-//Which bit enables GPIOC?
-#define GPIOCEN 0x02
 
 /**
  * See LCD documentation ST7066U

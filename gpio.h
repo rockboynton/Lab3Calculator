@@ -33,6 +33,8 @@
 
 #define RCC_AHB1ENR (volatile uint32_t*) 0x40023830
 #define GPIOAEN 0		// GPIOA Enable is bit 0 in RCC_APB1LPENR
+//Which bit enables GPIOC?
+#define GPIOCEN 2
 
 
 typedef struct {
