@@ -7,39 +7,114 @@
  * Implements functions specified in lcd.h to use the MSOE dev board LCD display
  */
 
-#include "lcd.h"
-#include "delay.h"
 #include <inttypes.h>
 #include <stdio.h>
-#include <gpio.h>
+
+#include "lcd.h"
+#include "delay.h"
+#include "gpio.h"
 
 
-// Pointer to the GPIO structure
+// Pointers to the GPIO structures
 static volatile GPIO* GPIOC = 0x40020800;
+static volatile GPIO* GPIOA = 0x40020000;
 
-// Maintain current cursor index from ??? - ???
-static uint8_t currentIndex = 0;
+// Maintain current cursor position from 0 - 31
+static uint8_t currentPosition = 0;
+
+static const uint8_t LED_WIDTH; 
+
+uint32_t temp_ptr;
 
 void lcd_init() {
-    // TODO
+    // Enable GPIOA and GPIOC in RCC_AHB1ENR
+	*(RCC_AHB1ENR) |= (1 << GPIOAEN) | (1 << GPIOCEN);
+
+    // Configure GPIOC pins 8-10 to output mode 
+    GPIOC->MODER = (GPIOC->MODER & ~0x003F0000) | 0x00150000;
+
+    // Configure GPIOA pins 4-11 to output mode 
+    GPIOA->MODER = (GPIOA->MODER & ~0x00FFFF00) | 0x00555500;
+
+    // init lcd 
+    delay_1ms(40);
+
+    lcd_write_instr_not_busy(0x38);  // 8-bit bus, 2-line display, 5x8 font
+    lcd_write_instr_not_busy(0x38);  // Reference manual specifies repeating twice
+    lcd_write_instr(0xF);            // Display on, cursor on, cursor blinking
+    lcd_clear();                     // Clear display
+    lcd_write_instr(0x06);           // Cursor/blink moves right, shift display is not performed
 }
 
 void lcd_clear() {
-    // TODO
+    lcd_write_instr(0x01);
+    delay_1us(1520);
 }
 
 void lcd_home() {
-    // TODO
+    lcd_write_instr(0x02);
+    delay_1us(1520);
 }
 
 void lcd_set_position(uint8_t row, uint8_t col) {
-    // TODO
+    col += 0x27;
+    lcd_write_instr((1 << DB7) | ((row * LED_WIDTH + col) << DB0));
 }
 
-uint32_t lcd_print_string(uint32_t str_ptr) {
+uint8_t lcd_print_string(uint32_t str_ptr) {
+    uint32_t count = 0;
+    for (int i = 0; i < str_ptr)
     return 0; // TODO
 }
 
 uint32_t lcd_print_num(uint32_t num) {
     // TODO
 }
+
+static void lcd_write_instr(uint32_t instr) {
+    lcd_wait_for_not_busy();
+    lcd_write_instr_not_busy(instr);
+}
+
+
+
+// file scope helper methods
+
+static void lcd_wait_for_not_busy() {
+    // From ST7066U:
+    //  before checking BF, delay at least 80us
+    delay_1us(80);
+
+    // Read Instruction Operation: RS = low, RW = high 
+    GPIOC->BSRR |= (1 << (RS + 16)) | (1 << RW) | (1 << E);
+
+    // Wait for not busy
+	uint32_t busyFlag = 1;
+    while (busyFlag) {
+        busyFlag = GPIOA->IDR & (1 << DB7);
+    }
+
+    // Reset E 
+    GPIOC->BSRR |= (1 << (E + 16));
+}
+
+static void lcd_write_instr_not_busy(uint32_t instr) {
+    // Write Instruction Operation: RS = low, RW = low 
+    GPIOC->BSRR |= (1 << (RS + 16)) | (1 << (RW + 16)) | (1 << E);
+    GPIOA->BSRR |= (instr << DB0); // offset appropriately
+    // Reset E 
+    GPIOC->BSRR |= (1 << (E + 16));
+    GPIOA->BSRR |= (0xFF << DB0); // for check busy flag
+    delay_1us(37);
+}
+
+void lcd_print_char(char c) {
+    // Write Data Operation: RS = high, RW = low 
+    GPIOC->BSRR |= (1 << (RS)) | (1 << (RW + 16)) | (1 << E);
+    GPIOA->BSRR |= (c << DB0); // offset appropriately
+    // Reset E 
+    GPIOC->BSRR |= (1 << (E + 16));
+    GPIOA->BSRR |= (0xFF << DB0); // for check busy flag
+    delay_1us(37);
+}
+

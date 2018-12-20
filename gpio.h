@@ -31,6 +31,8 @@
 
 #include <inttypes.h>
 
+#define RCC_AHB1ENR (volatile uint32_t*) 0x40023830
+
 typedef struct {
 	uint32_t MODER;
 	uint32_t OTYPER;

@@ -11,7 +11,7 @@
 #include "delay.h"
 #include <inttypes.h>
 #include <stdio.h>
-#include <gpio.h>
+#include "gpio.h"
 
 
 // Pointer to the GPIO structure

@@ -31,6 +31,18 @@
  */
 void delay_1ms(uint32_t n);
 
+/*
+ * delay_1us
+ * 		Busy wait for n us
+ *
+ * 		For n iterations
+ * 			load number of cycles for 1 us
+ * 			set one to enable and clock source
+ *
+ * 			wait for countflag to be set
+ */
+void delay_1ms(uint32_t n);
+
 
 
 #endif /* DELAY_H_ */

@@ -27,7 +27,7 @@ void led_init(){
 	*(RCC_AHB1ENR) |= (1 << GPIOBEN);
 	// Turn on to set LED0 - LED9 to output mode ("01")
 	// Pins 5-10, 12-15
-	*(GPIOB_MODER) &= ~0xFF3FFC00;
+	*(GPIOB_MODER) &= ~0xFF3FFC00; // TODO change this to atomic by using temp value
 	*(GPIOB_MODER) |= 0x55155400;
 }
 

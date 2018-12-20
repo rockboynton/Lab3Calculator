@@ -369,7 +369,7 @@
 #define LCD_FUNCTION_FONT_5X8 (volatile uint32_t*) 0x00
 #define LCD_FUNCTION_FONT_5X11 (volatile uint32_t*) 0x04 
 
-// *** Nucleo-64 defines ***#define 
+// *** Nucleo-64 defines ***
 
 #define BUTTON_GPIO_PORT (volatile uint32_t*) 2 // Port C
 #define BUTTON_GPIO_PIN (volatile uint32_t*) 13
