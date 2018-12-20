@@ -33,7 +33,7 @@ static void lcd_data(uint8_t data); // Dravens
 
 void lcd_init() {
     // Enable GPIOA and GPIOC in RCC_AHB1ENR
-	*(RCC_AHB1ENR) |= (1 << GPIOAEN) | (1 << GPIOCEN);
+	*(RCC_AHB1ENR) |= ((1 << GPIOAEN) | (1 << GPIOCEN));
 
     // Configure GPIOC pins 8-10 to output mode 
     GPIOC->MODER = (GPIOC->MODER & ~0x003F0000) | 0x00150000;
@@ -94,7 +94,12 @@ static void lcd_wait_for_not_busy() {
     delay_1us(80);
 
     // Read Instruction Operation: RS = low, RW = high 
-    GPIOC->BSRR |= (1 << (RS + 16)) | (1 << RW) | (1 << E);
+    GPIOC->BSRR = (1 << (RS + 16)) | (1 << RW);
+    // Toggle E 
+    GPIOC->BSRR = (1 << E);
+    delay_1us(1);
+    GPIOC->BSRR = (1 << (E + 16));
+
 
     // Wait for not busy
 	uint32_t busyFlag = 1;
@@ -108,12 +113,14 @@ static void lcd_wait_for_not_busy() {
 
 static void lcd_write_instr_not_busy(uint32_t instr) {
     // Write Instruction Operation: RS = low, RW = low 
-    GPIOC->BSRR |= (1 << (RS + 16)) | (1 << (RW + 16)) | (1 << E);
-    GPIOA->BSRR |= (instr << DB0); // offset appropriately
-    // Reset E 
-    GPIOC->BSRR |= (1 << (E + 16));
-    GPIOA->BSRR |= (0xFF << DB0); // for check busy flag
-    delay_1us(37);
+    GPIOC->BSRR = (1 << (RS + 16)) | (1 << (RW + 16));
+    GPIOA->ODR = (GPIOA->ODR & (0xFFFFF00F)) | (instr << 4);
+    // Toggle E 
+    GPIOC->BSRR = (1 << E);
+    delay_1us(1);
+    GPIOC->BSRR = (1 << (E + 16));
+    // GPIOA->BSRR |= (0xFF << DB0); // for check busy flag ---- specified in manual but doesnt work
+    delay_1us(40);
 }
 
 static void lcd_print_char(char c) {
@@ -123,7 +130,7 @@ static void lcd_print_char(char c) {
     // Reset E 
     GPIOC->BSRR |= (1 << (E + 16));
     GPIOA->BSRR |= (0xFF << DB0); // for check busy flag
-    delay_1us(37);
+    delay_1us(40);
 }
 
 
