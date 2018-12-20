@@ -83,7 +83,7 @@ void lcd_set_position(uint8_t row, uint8_t col);
  * @return 
  *      number of characters written to the display
  */ 
-uint8_t lcd_print_string(uint32_t str_ptr);
+uint8_t lcd_print_string(char *str_ptr);
 
 /**
  * Prints a (decimal) number to the display. 

@@ -61,10 +61,12 @@ void lcd_set_position(uint8_t row, uint8_t col) {
     lcd_write_instr((1 << DB7) | ((row * LED_WIDTH + col) << DB0));
 }
 
-uint8_t lcd_print_string(uint32_t str_ptr) {
-    uint32_t count = 0;
-    for (int i = 0; i < str_ptr)
-    return 0; // TODO
+uint8_t lcd_print_string(char *str_ptr) {
+    uint8_t i;
+    for (i = 0; str_ptr[i] != '\0'; i++) {
+        lcd_print_char(str_ptr[i]);
+    }
+    return i; 
 }
 
 uint32_t lcd_print_num(uint32_t num) {

@@ -20,6 +20,8 @@
 
 #define F_CPU 16000000UL
 
+#define DEBUG
+
 
 // main
 int main(){
@@ -30,11 +32,22 @@ int main(){
 	// Initialize hardware
 	init_usart2(19200,F_CPU);
 	led_init();
-	
+	lcd_init();
 	
 	// Never return 
 	while (1) {
-		
+		// Test code for LCD
+		if (DEBUG) {
+			char greeting[] = "hello\n";
+			lcd_print_string(greeting);
+			delay_1ms(3000);
+			lcd_clear();
+			delay_1ms(3000);
+			lcd_home();
+			delay_1ms(3000);
+
+
+		}
 	}
 
 	// Never returns
