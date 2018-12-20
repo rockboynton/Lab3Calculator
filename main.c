@@ -19,6 +19,7 @@
 #include "led.h"
 #include "lcd.h"
 #include "keypad.h"
+#include "delay.h"
 
 #define F_CPU 16000000UL
 
