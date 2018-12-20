@@ -19,8 +19,8 @@
 static volatile GPIO* GPIOC = 0x40020800;
 static volatile GPIO* GPIOA = 0x40020000;
 
-// Maintain current cursor position from 0 - 31
-static uint8_t currentPosition = 0;
+//// Maintain current cursor position from 0 - 31
+//static uint8_t currentPosition = 0;
 
 static const uint8_t LED_WIDTH; 
 
@@ -73,6 +73,7 @@ uint8_t lcd_print_string(char *str_ptr) {
 
 uint32_t lcd_print_num(uint32_t num) {
     // TODO
+	return 0;
 }
 
 void lcd_write_instr(uint32_t instr) {

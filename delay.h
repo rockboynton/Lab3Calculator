@@ -41,7 +41,7 @@ void delay_1ms(uint32_t n);
  *
  * 			wait for countflag to be set
  */
-void delay_1ms(uint32_t n);
+void delay_1us(uint32_t n);
 
 
 
