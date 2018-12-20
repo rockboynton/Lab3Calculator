@@ -26,6 +26,16 @@ static const uint8_t LED_WIDTH;
 
 uint32_t temp_ptr;
 
+static void lcd_write_instr_not_busy(uint32_t instr) {
+    // Write Instruction Operation: RS = low, RW = low 
+    GPIOC->BSRR |= (1 << (RS + 16)) | (1 << (RW + 16)) | (1 << E);
+    GPIOA->BSRR |= (instr << DB0); // offset appropriately
+    // Reset E 
+    GPIOC->BSRR |= (1 << (E + 16));
+    GPIOA->BSRR |= (0xFF << DB0); // for check busy flag
+    delay_1us(37);
+}
+
 void lcd_init() {
     // Enable GPIOA and GPIOC in RCC_AHB1ENR
 	*(RCC_AHB1ENR) |= (1 << GPIOAEN) | (1 << GPIOCEN);
@@ -73,10 +83,7 @@ uint32_t lcd_print_num(uint32_t num) {
     // TODO
 }
 
-static void lcd_write_instr(uint32_t instr) {
-    lcd_wait_for_not_busy();
-    lcd_write_instr_not_busy(instr);
-}
+
 
 
 
@@ -100,15 +107,12 @@ static void lcd_wait_for_not_busy() {
     GPIOC->BSRR |= (1 << (E + 16));
 }
 
-static void lcd_write_instr_not_busy(uint32_t instr) {
-    // Write Instruction Operation: RS = low, RW = low 
-    GPIOC->BSRR |= (1 << (RS + 16)) | (1 << (RW + 16)) | (1 << E);
-    GPIOA->BSRR |= (instr << DB0); // offset appropriately
-    // Reset E 
-    GPIOC->BSRR |= (1 << (E + 16));
-    GPIOA->BSRR |= (0xFF << DB0); // for check busy flag
-    delay_1us(37);
+static void lcd_write_instr(uint32_t instr) {
+    lcd_wait_for_not_busy();
+    lcd_write_instr_not_busy(instr);
 }
+
+
 
 void lcd_print_char(char c) {
     // Write Data Operation: RS = high, RW = low 
