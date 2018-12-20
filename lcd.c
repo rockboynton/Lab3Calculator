@@ -28,9 +28,6 @@ static void lcd_wait_for_not_busy();
 static void lcd_write_instr_not_busy(uint32_t instr);
 static void lcd_print_char(char c);
 
-static void lcd_cmd(uint8_t cmd); // Dravens
-static void lcd_data(uint8_t data); // Dravens
-
 void lcd_init() {
     // Enable GPIOA and GPIOC in RCC_AHB1ENR
 	*(RCC_AHB1ENR) |= ((1 << GPIOAEN) | (1 << GPIOCEN));
@@ -53,13 +50,11 @@ void lcd_init() {
 
 void lcd_clear() {
     lcd_write_instr(0x01);
-    // lcd_cmd(0x01); // dravens
     delay_1us(1520);
 }
 
 void lcd_home() {
     lcd_write_instr(0x02);
-    // lcd_cmd(0x02); // dravens
     delay_1us(1520);
 }
 
@@ -130,40 +125,5 @@ static void lcd_print_char(char c) {
     // Reset E 
     GPIOC->BSRR |= (1 << (E + 16));
     GPIOA->BSRR |= (0xFF << DB0); // for check busy flag
-    delay_1us(40);
-}
-
-
-
-
-
-
-
-// Dravens
-void init_lcd() {
-    *RCC_AHB1ENR |=0b101;
-    GPIOC->MODER = (GPIOC->MODER&0xFFC0FFFF)|(0b010101<<16);
-    GPIOA->MODER = (GPIOA->MODER&0xFF0000FF)|(0x5555<<8);
-    lcd_cmd(0x38);
-    lcd_clear();
-    lcd_home();
-    lcd_cmd(0x06);
-    lcd_cmd(0x0F);
-}
-
-static void lcd_cmd(uint8_t cmd) {
-    GPIOC->BSRR = 0b11<<24;
-    GPIOA->ODR = (GPIOA->ODR & (0xFFFFF00F))|(cmd<<4); // ! This might be the one 
-    GPIOC->BSRR = 1<<10;
-    delay_1us(1);
-    GPIOC->BSRR = 1<<26;
-    delay_1us(40);
-}
-
-static void lcd_data(uint8_t data) {
-    GPIOC->BSRR = (1<<8)|(1<<25);
-    GPIOA->ODR = (GPIOA->ODR & (0xFFFFF00F))|(data<<4);
-    delay_1us(1);
-    GPIOC->BSRR = 1<<26;
     delay_1us(40);
 }
