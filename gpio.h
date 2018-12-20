@@ -32,6 +32,8 @@
 #include <inttypes.h>
 
 #define RCC_AHB1ENR (volatile uint32_t*) 0x40023830
+#define GPIOAEN 0		// GPIOA Enable is bit 0 in RCC_APB1LPENR
+
 
 typedef struct {
 	uint32_t MODER;

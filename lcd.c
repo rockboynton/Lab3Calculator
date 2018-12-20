@@ -51,9 +51,9 @@ void lcd_init() {
 
     lcd_write_instr_not_busy(0x38);  // 8-bit bus, 2-line display, 5x8 font
     lcd_write_instr_not_busy(0x38);  // Reference manual specifies repeating twice
-    lcd_write_instr(0xF);            // Display on, cursor on, cursor blinking
+    lcd_write_instr(0xF);            // Display on, cursor on, cursor blinking // could change to lcd_write_instr
     lcd_clear();                     // Clear display
-    lcd_write_instr(0x06);           // Cursor/blink moves right, shift display is not performed
+    lcd_write_instr(0x06);           // Cursor/blink moves right, shift display is not performed // could change to lcd_write_instr
 }
 
 void lcd_clear() {
@@ -99,7 +99,7 @@ static void lcd_wait_for_not_busy() {
 
     // Wait for not busy
 	uint32_t busyFlag = 1;
-    while (busyFlag) {
+    while (busyFlag == 1) {
         busyFlag = GPIOA->IDR & (1 << DB7);
     }
 
@@ -107,7 +107,7 @@ static void lcd_wait_for_not_busy() {
     GPIOC->BSRR |= (1 << (E + 16));
 }
 
-static void lcd_write_instr(uint32_t instr) {
+void lcd_write_instr(uint32_t instr) {
     lcd_wait_for_not_busy();
     lcd_write_instr_not_busy(instr);
 }

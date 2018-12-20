@@ -17,10 +17,12 @@
 #include <stdlib.h>
 #include "uart_driver.h"
 #include "led.h"
+#include "lcd.h"
+#include "keypad.h"
 
 #define F_CPU 16000000UL
 
-#define DEBUG
+#define DEBUG 1
 
 
 // main
@@ -39,7 +41,7 @@ int main(){
 		// Test code for LCD
 		if (DEBUG) {
 			char greeting[] = "hello\n";
-			lcd_print_string(greeting);
+			lcd_print_string(*greeting);
 			delay_1ms(3000);
 			lcd_clear();
 			delay_1ms(3000);

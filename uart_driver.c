@@ -5,6 +5,7 @@
  *      Author: barnekow
  */
 #include "uart_driver.h"
+#include "gpio.h"
 #include <inttypes.h>
 #include <stdio.h>
 
