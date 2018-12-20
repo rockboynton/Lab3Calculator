@@ -30,31 +30,51 @@
 int main(){
 
 	// Initialize variables to be used 
+	static char TEMPLATE[] = "_ + _ = __";
+	uint8_t numChars;
+	static const uint8_t aIndex = 0;
+	static const uint8_t opIndex = 2;
+	static const uint8_t bIndex = 4;
+	static const uint8_t resIndex = 8;
+
+	uint8_t result[2];
 	
 
 	// Initialize hardware
 	init_usart2(19200,F_CPU);
 	led_init();
-	 lcd_init();
-//	init_lcd(); // Dravens
-	
-	// Never return 
+	lcd_init();
+
+	// --------------------- LCD TEST CODE ----------------------
+	if (DEBUG) {
+		delay_1ms(1000);
+		numChars = lcd_print_string(TEMPLATE);
+			delay_1ms(1000);
+		lcd_home();
+			delay_1ms(1000);
+		lcd_write_data('2');
+			delay_1ms(1000);
+		lcd_set_position(0,2);
+			delay_1ms(1000);
+		lcd_write_data('+');
+			delay_1ms(1000);
+		lcd_set_position(0,4);
+			delay_1ms(1000);
+		lcd_write_data('2');
+			delay_1ms(1000);
+		lcd_set_position(0,8);
+				delay_1ms(1000);
+		sprintf(result, "%d", 4);
+		lcd_print_string(result);
+			delay_1ms(1000);
+	}
+	// -------------------------------------------------------------
+
+
+
+	// Never return
 	while (1) {
-		// Test code for LCD
-		if (DEBUG) {
-			char greeting[] = "hello\n";
-			// lcd_print_string(greeting);
-			lcd_set_position(0, 6);
-			delay_1ms(3000);
-			lcd_clear();
-			delay_1ms(3000);
-			lcd_home();
-			delay_1ms(3000);
-			lcd_set_position(1, 10);
-			delay_1ms(3000);
-
-
-		}
+		 
 	}
 
 	// Never returns

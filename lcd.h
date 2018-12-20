@@ -101,4 +101,9 @@ uint32_t lcd_print_num(uint32_t num);
  */
 void lcd_write_instr(uint32_t instr);
 
+/**
+ * TODO 
+ */ 
+void lcd_write_data(uint32_t data);
+
 #endif
