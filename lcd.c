@@ -102,8 +102,8 @@ static void lcd_wait_for_not_busy() {
         busyFlag = GPIOA->IDR & (1 << DB7);
     }
 
-    // Reset E 
-    GPIOC->BSRR |= (1 << (E + 16));
+    // // Reset E 
+    // GPIOC->BSRR |= (1 << (E + 16));
 }
 
 static void lcd_write_instr_not_busy(uint32_t instr) {

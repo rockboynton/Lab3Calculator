@@ -43,11 +43,14 @@ int main(){
 		// Test code for LCD
 		if (DEBUG) {
 			char greeting[] = "hello\n";
-			lcd_print_string(greeting);
+			// lcd_print_string(greeting);
+			lcd_set_position(0, 6);
 			delay_1ms(3000);
 			lcd_clear();
 			delay_1ms(3000);
 			lcd_home();
+			delay_1ms(3000);
+			lcd_set_position(1, 10);
 			delay_1ms(3000);
 
 
