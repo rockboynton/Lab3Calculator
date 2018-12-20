@@ -24,8 +24,6 @@ static uint8_t currentPosition = 0;
 
 static const uint8_t LED_WIDTH; 
 
-uint32_t temp_ptr;
-
 static void lcd_write_instr_not_busy(uint32_t instr) {
     // Write Instruction Operation: RS = low, RW = low 
     GPIOC->BSRR |= (1 << (RS + 16)) | (1 << (RW + 16)) | (1 << E);
@@ -82,9 +80,6 @@ uint8_t lcd_print_string(char *str_ptr) {
 uint32_t lcd_print_num(uint32_t num) {
     // TODO
 }
-
-
-
 
 
 // file scope helper methods

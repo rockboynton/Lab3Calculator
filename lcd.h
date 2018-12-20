@@ -12,7 +12,6 @@
 
 //Which bit enables GPIOC?
 #define GPIOCEN 0x02
-#define GPIOAEN 0x00
 
 /**
  * See LCD documentation ST7066U
