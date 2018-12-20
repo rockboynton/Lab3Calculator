@@ -52,14 +52,14 @@ void lcd_init() {
 }
 
 void lcd_clear() {
-    // lcd_write_instr(0x01);
-    lcd_cmd(0x01); // dravens
+    lcd_write_instr(0x01);
+    // lcd_cmd(0x01); // dravens
     delay_1us(1520);
 }
 
 void lcd_home() {
     lcd_write_instr(0x02);
-    lcd_cmd(0x02); // dravens
+    // lcd_cmd(0x02); // dravens
     delay_1us(1520);
 }
 

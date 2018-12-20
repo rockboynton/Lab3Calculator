@@ -35,8 +35,8 @@ int main(){
 	// Initialize hardware
 	init_usart2(19200,F_CPU);
 	led_init();
-	// lcd_init();
-	init_lcd(); // Dravens
+	 lcd_init();
+//	init_lcd(); // Dravens
 	
 	// Never return 
 	while (1) {
