@@ -46,6 +46,13 @@ int main(){
 	lcd_init();
 	key_init();
 
+	uint8_t ch;
+
+	while (1) {
+		ch = key_getChar();
+		lcd_write_data(ch);
+	}
+
 	// --------------------- LCD TEST CODE ----------------------
 	if (DEBUG) {
 		delay_1ms(1000);
@@ -68,9 +75,6 @@ int main(){
 		sprintf(result, "%d", 4);
 		lcd_print_string(result);
 			delay_1ms(1000);
-		// while (1) {
-		// 	lcd_write_data(key_getChar());
-		// }
 	}
 	// -------------------------------------------------------------
 

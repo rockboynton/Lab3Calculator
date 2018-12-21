@@ -18,9 +18,7 @@ static volatile GPIO* GPIOC = 0x40020800;
 static volatile GPIO* GPIOA = 0x40020000;
 
 static uint8_t findPosition(uint8_t n);
-
-// Maps indexes to character displayed on physical keys
-static const KEY_MAP[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+static const uint8_t KEY_MAP[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                           'A', 'B', 'C', 'D', '*', '#'};
 
 // Lookup table to reverse bits, since keypad pins are big endian 
@@ -52,6 +50,7 @@ void key_init() {
 uint8_t key_getKey_noBlock() {
     uint8_t keyPressed = 0;
     uint8_t row = ((GPIOC->IDR & (0xF << KEYPAD_ROW1)) >> KEYPAD_ROW1);
+    uint8_t col = 0;
     if (row == 0xF) {
         return keyPressed;
     } else {
@@ -65,12 +64,7 @@ uint8_t key_getKey_noBlock() {
     }
     // Flip MODER back 
     GPIOC->MODER = (GPIOC->MODER & ~0x0000FFFF) | 0x00000055;
-    return keyPressed;
-    // }
-    // uint8_t rowMap[] = {0,0,4,0,8,0,0,0,12};
-    // uint8_t colMap[] = {0,1,2,0,3,0,0,0,4};
-    // row = rowMap[row];
-    // col = colMap[col];
+   return keyPressed; //ADD BACK
     // return row + col;
 }
 
@@ -79,6 +73,7 @@ uint8_t key_getKey() {
     while (keyPressed == 0) {
         keyPressed = key_getKey_noBlock();
     }
+    // Wait for key release
     while (key_getKey_noBlock()) {
     }
     return keyPressed;
