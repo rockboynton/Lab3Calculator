@@ -418,7 +418,7 @@
 #define KEYPAD_PIN_8 (volatile uint32_t*) GPIO_C + 7
 
 // Note that rows and columns are numbered starting at 1
-// but in code we refer to row and column INDEXES which start at 0#define 
+// but in code we refer to row and column INDEXES which start at 0
 
 #define KEYPAD_ROW1 (volatile uint32_t*) KEYPAD_PIN_5
 #define KEYPAD_ROW2 (volatile uint32_t*) KEYPAD_PIN_6

@@ -10,6 +10,18 @@
 
 #include <inttypes.h>
 
+#define KEYPAD_ROW1 4
+#define KEYPAD_ROW2 5
+#define KEYPAD_ROW3 6
+#define KEYPAD_ROW4 7
+#define KEYPAD_COL1 0
+#define KEYPAD_COL2 1
+#define KEYPAD_COL3 2
+#define KEYPAD_COL4 3
+
+#define ROW_COUNT 4
+#define COL_COUNT 4
+
 /**
  * Initialize the keypad GPIO port.
  */

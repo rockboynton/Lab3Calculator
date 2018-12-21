@@ -22,7 +22,7 @@ static volatile GPIO* GPIOA = 0x40020000;
 //// Maintain current cursor position from 0 - 31
 //static uint8_t currentPosition = 0;
 
-static const uint8_t LED_WIDTH = 40;
+static const uint8_t LCD_WIDTH = 40;
 
 static void lcd_wait_for_not_busy();
 static void lcd_write_instr_not_busy(uint32_t instr);
@@ -61,14 +61,10 @@ void lcd_home() {
 }
 
 void lcd_set_position(uint8_t row, uint8_t col) {
-    uint8_t position = (row * LED_WIDTH + col);
+    uint8_t position = (row * LCD_WIDTH + col);
     // Set new DDRAM address
     lcd_write_instr((1 << (DB7 - DB0) | position));
     delay_1us(1520);
-    // for (int i = 0; i < position; i++) {
-    //     lcd_write_instr(0x14); // shift cursor right
-    //     delay_1us(1520); 
-    // }
 }
 
 uint8_t lcd_print_string(char *str_ptr) {

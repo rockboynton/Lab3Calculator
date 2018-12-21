@@ -44,6 +44,7 @@ int main(){
 	init_usart2(19200,F_CPU);
 	led_init();
 	lcd_init();
+	key_init();
 
 	// --------------------- LCD TEST CODE ----------------------
 	if (DEBUG) {
@@ -52,21 +53,24 @@ int main(){
 			delay_1ms(1000);
 		lcd_home();
 			delay_1ms(1000);
-		lcd_write_data('2');
+		lcd_write_data(key_getChar());
 			delay_1ms(1000);
 		lcd_set_position(0,2);
 			delay_1ms(1000);
-		lcd_write_data('+');
+		lcd_write_data(key_getChar());
 			delay_1ms(1000);
 		lcd_set_position(0,4);
 			delay_1ms(1000);
-		lcd_write_data('2');
+		lcd_write_data(key_getChar());
 			delay_1ms(1000);
 		lcd_set_position(0,8);
 				delay_1ms(1000);
 		sprintf(result, "%d", 4);
 		lcd_print_string(result);
 			delay_1ms(1000);
+		// while (1) {
+		// 	lcd_write_data(key_getChar());
+		// }
 	}
 	// -------------------------------------------------------------
 
