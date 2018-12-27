@@ -18,8 +18,9 @@ static volatile GPIO* GPIOC = 0x40020800;
 static volatile GPIO* GPIOA = 0x40020000;
 
 static uint8_t findPosition(uint8_t n);
-static const uint8_t KEY_MAP[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                          'A', 'B', 'C', 'D', '*', '#'};
+static const uint8_t CHAR_MAP[] = {'0', '1', '2', '3', 'A', '4', '5', '6', 'B', '7',
+                          '8', '9', 'C', '*', '0', '#', 'D'};
+static const uint8_t KEY_MAP[] = {0, 1, 2, 3, 10, 4, 5, 6, 11, 7, 8, 9, 12, 14, 0, 15, 13};
 
 // Lookup table to reverse bits, since keypad pins are big endian 
 static const uint8_t LOOKUP[16] = {
@@ -56,37 +57,40 @@ uint8_t key_getKey_noBlock() {
     } else {
         // Flip modes of rows and cols
         GPIOC->MODER = (GPIOC->MODER & ~0x0000FFFF) | 0x00005500;
-        uint8_t col = (GPIOC->IDR & 0xF);
+        delay_1us(5);
+        col = (GPIOC->IDR & 0xF);
         // adjust for active low and get its the actual row and col position
-        row = findPosition(LOOKUP[row] ^ 0xF);
-        col = findPosition(LOOKUP[col] ^ 0xF);
+        row = findPosition(row ^ 0xF) - 1;
+        col = findPosition(col ^ 0xF) - 1;
         keyPressed = (row * ROW_COUNT + col);
     }
     // Flip MODER back 
     GPIOC->MODER = (GPIOC->MODER & ~0x0000FFFF) | 0x00000055;
-   return keyPressed; //ADD BACK
-    // return row + col;
+    delay_1ms(18);
+   return keyPressed + 1;
 }
 
 uint8_t key_getKey() {
     uint8_t keyPressed = 0;
+    // Wait for key press
     while (keyPressed == 0) {
         keyPressed = key_getKey_noBlock();
     }
+    delay_1us(5);
     // Wait for key release
     while (key_getKey_noBlock()) {
     }
-    return keyPressed;
-
+    return KEY_MAP[keyPressed];
 }
+
 uint8_t key_getChar() {
-    return KEY_MAP[key_getKey()];
+    return CHAR_MAP[key_getKey()];
 }
 
-// Returns position of the only set bit in 'n' 
+// Returns index of the only set bit in 'n' 
 static uint8_t findPosition(uint8_t n) { 
     uint8_t i = 1;
-    uint8_t pos = 1; 
+    uint8_t pos = 1;
     // Iterate through bits of n till we find a set bit 
     // i&n will be non-zero only when 'i' and 'n' have a set bit 
     // at same position 

@@ -23,7 +23,10 @@
 
 #define F_CPU 16000000UL
 
-#define DEBUG 1
+// 0 = main program
+// 1 = keypad tests
+// 2 = LCD tests
+#define DEBUG 0
 
 
 // main
@@ -32,12 +35,28 @@ int main(){
 	// Initialize variables to be used 
 	static char TEMPLATE[] = "_ + _ = __";
 	uint8_t numChars;
-	static const uint8_t aIndex = 0;
-	static const uint8_t opIndex = 2;
-	static const uint8_t bIndex = 4;
-	static const uint8_t resIndex = 8;
+	static const uint8_t A_INDEX = 0;
+	static const uint8_t OP_INDEX = 2;
+	static const uint8_t B_INDEX = 4;
+	static const uint8_t RES_INDEX = 8;
+	static const uint8_t OP_MAP[] = {
+		0,0,0,0,0,0,0,0,0,0,
+		'+','-','x','/',0,0,0 // Key A->+, Key B->-, Key C->x, Key D->/
+		};
+
+	// Operands
+	uint8_t a, b;
+
+	// Operator
+	uint8_t op;
+
+	// Result
+	uint8_t res;
 
 	uint8_t result[2];
+
+	// Valid flag
+	uint8_t valid;
 	
 
 	// Initialize hardware
@@ -46,48 +65,101 @@ int main(){
 	lcd_init();
 	key_init();
 
-	uint8_t ch;
+	uint8_t key;
 
-	while (1) {
-		ch = key_getChar();
-		lcd_write_data(ch);
+	// --------------------- KEYPAD TEST CODE -------------------
+	if (DEBUG == 2) {
+		while (1) {
+			key = key_getKey();
+			lcd_print_num(key);
+		}
 	}
+	//-----------------------------------------------------------
 
 	// --------------------- LCD TEST CODE ----------------------
-	if (DEBUG) {
+	if (DEBUG == 1) {
 		delay_1ms(1000);
 		numChars = lcd_print_string(TEMPLATE);
 			delay_1ms(1000);
 		lcd_home();
 			delay_1ms(1000);
-		lcd_write_data(key_getChar());
+		lcd_print_num(9);
 			delay_1ms(1000);
-		lcd_set_position(0,2);
+		lcd_set_position(0,OP_INDEX);
 			delay_1ms(1000);
-		lcd_write_data(key_getChar());
+		lcd_write_data('-');
 			delay_1ms(1000);
-		lcd_set_position(0,4);
+		lcd_set_position(0,B_INDEX);
 			delay_1ms(1000);
-		lcd_write_data(key_getChar());
+		lcd_print_num(5);
 			delay_1ms(1000);
-		lcd_set_position(0,8);
+		lcd_set_position(0,RES_INDEX);
 				delay_1ms(1000);
 		sprintf(result, "%d", 4);
 		lcd_print_string(result);
 			delay_1ms(1000);
+		while(1){}
 	}
 	// -------------------------------------------------------------
 
 
-
+	// Main program 
 	// Never return
+	lcd_print_string(TEMPLATE);
 	while (1) {
-		 
+		valid = 0;
+		lcd_set_position(0, A_INDEX);
+
+		while (!valid) {
+			a = key_getKey();
+			if (a < 10) {
+				valid = 1;
+			}
+		}
+		lcd_print_num(a);
+
+		op = 0;
+		lcd_set_position(0, OP_INDEX);
+		while (op != '+' && op != '-' && op != 'x' && op != '/') {
+			key = key_getKey();
+			op = OP_MAP[key];
+		}
+		lcd_write_data(op);
+
+		valid = 0;
+		lcd_set_position(0, B_INDEX);
+		while (!valid) {
+			b = key_getKey();
+			if (a < 10) {
+				valid = 1;
+			}
+		}
+		lcd_print_num(b);
+
+		switch (op) {
+			case '+':
+				res = a + b;
+				break;
+			case '-':
+				res = a - b;
+				break;
+			case 'x':
+				res = a * b;
+				break;
+			case '/':
+				res = a / b;
+				break;
+			default:
+				printf("invalid Operation.\n");
+				break;
+		}
+
+		lcd_set_position(0, RES_INDEX);
+		sprintf(result, "%d", res);
+		lcd_print_string(result);
+		lcd_home();
 	}
 
 	// Never returns
 	return 0;
 }
-
-
-
