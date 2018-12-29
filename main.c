@@ -33,22 +33,23 @@
 int main(){
 
 	// Initialize variables to be used 
-	static char TEMPLATE[] = "_ + _ = __";
+	static char TEMPLATE[] = "1 + 1 = __";
 	uint8_t numChars;
 	static const uint8_t A_INDEX = 0;
 	static const uint8_t OP_INDEX = 2;
 	static const uint8_t B_INDEX = 4;
 	static const uint8_t RES_INDEX = 8;
-	static const uint8_t OP_MAP[] = {
-		0,0,0,0,0,0,0,0,0,0,
-		'+','-','x','/',0,0,0 // Key A->+, Key B->-, Key C->x, Key D->/
+	static const uint8_t KEY_MAP[] = {
+		0,1,2,3,4,5,6,7,8,9,
+		'+','-','x','/','*','#',0 // Key A->+, Key B->-, Key C->x, Key D->/
 		};
 
 	// Operands
-	uint8_t a, b;
+	uint8_t a = 1;
+	uint8_t b = 1;
 
 	// Operator
-	uint8_t op;
+	uint8_t op = '+';
 
 	// Result
 	uint8_t res;
@@ -57,6 +58,8 @@ int main(){
 
 	// Valid flag
 	uint8_t valid;
+
+	uint8_t position;
 	
 
 	// Initialize hardware
@@ -107,59 +110,111 @@ int main(){
 	// Never return
 	lcd_print_string(TEMPLATE);
 	while (1) {
-		valid = 0;
-		lcd_set_position(0, A_INDEX);
-
+		valid = 0; 
 		while (!valid) {
-			a = key_getKey();
-			if (a < 10) {
-				valid = 1;
-			}
+			key = KEY_MAP[key_getKey()];
 		}
-		lcd_print_num(a);
-
-		op = 0;
-		lcd_set_position(0, OP_INDEX);
-		while (op != '+' && op != '-' && op != 'x' && op != '/') {
-			key = key_getKey();
-			op = OP_MAP[key];
-		}
-		lcd_write_data(op);
-
-		valid = 0;
-		lcd_set_position(0, B_INDEX);
-		while (!valid) {
-			b = key_getKey();
-			if (a < 10) {
-				valid = 1;
-			}
-		}
-		lcd_print_num(b);
-
-		switch (op) {
+		switch (key) {
+			case '*':
+				lcd_set_position(0, RES_INDEX);
+				lcd_print_string("__");
+				lcd_home();
+				break;
+			case '#':
+				calculate
+				break;
 			case '+':
-				res = a + b;
+				
 				break;
 			case '-':
-				res = a - b;
+				
 				break;
 			case 'x':
-				res = a * b;
+				
 				break;
 			case '/':
-				res = a / b;
+				
 				break;
 			default:
 				printf("invalid Operation.\n");
 				break;
 		}
-
-		lcd_set_position(0, RES_INDEX);
-		sprintf(result, "%d", res);
-		lcd_print_string(result);
-		lcd_home();
 	}
 
 	// Never returns
 	return 0;
 }
+
+static uint8_t calculate(uint8_t a, uint8_t op, uint8_t b) {
+	uint8_t res = 0;
+	switch (op) {
+		case '+':
+			res = a + b;
+			break;
+		case '-':
+			res = a - b;
+			break;
+		case 'x':
+			res = a * b;
+			break;
+		case '/':
+			res = a / b;
+			break;
+		default:
+			printf("invalid Operation.\n");
+			break;
+	}
+	return res;
+}
+
+// valid = 0;
+// 		lcd_set_position(0, A_INDEX);
+
+// 		while (!valid) {
+// 			a = key_getKey();
+// 			if (a < 10) {
+// 				valid = 1;
+// 			}
+// 		}
+// 		lcd_print_num(a);
+
+// 		op = 0;
+// 		lcd_set_position(0, OP_INDEX);
+// 		while (op != '+' && op != '-' && op != 'x' && op != '/') {
+// 			key = key_getKey();
+// 			op = OP_MAP[key];
+// 		}
+// 		lcd_write_data(op);
+
+// 		valid = 0;
+// 		lcd_set_position(0, B_INDEX);
+// 		while (!valid) {
+// 			b = key_getKey();
+// 			if (a < 10) {
+// 				valid = 1;
+// 			}
+// 		}
+// 		lcd_print_num(b);
+
+// 		switch (op) {
+// 			case '+':
+// 				res = a + b;
+// 				break;
+// 			case '-':
+// 				res = a - b;
+// 				break;
+// 			case 'x':
+// 				res = a * b;
+// 				break;
+// 			case '/':
+// 				res = a / b;
+// 				break;
+// 			default:
+// 				printf("invalid Operation.\n");
+// 				break;
+// 		}
+
+// 		lcd_set_position(0, RES_INDEX);
+// 		sprintf(result, "%d", res);
+// 		lcd_print_string(result);
+// 		lcd_home();
