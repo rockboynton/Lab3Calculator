@@ -50,6 +50,7 @@ void key_init() {
 
 uint8_t key_getKey_noBlock() {
     uint8_t keyPressed = 0;
+    delay_1us(5);
     uint8_t row = ((GPIOC->IDR & (0xF << KEYPAD_ROW1)) >> KEYPAD_ROW1);
     uint8_t col = 0;
     if (row == 0xF) {

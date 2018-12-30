@@ -48,7 +48,7 @@ uint8_t b = 1;
 uint8_t op = '+';
 
 // Result
-uint8_t res;
+int res;
 
 uint8_t result[2];
 
@@ -59,7 +59,7 @@ uint8_t valid;
 uint8_t key;
 
 // Helper Functions
-static uint8_t calculate(uint8_t a, uint8_t op, uint8_t b);
+static int calculate(uint8_t a, uint8_t op, uint8_t b);
 static void clear_res();
 static void enter();
 
@@ -134,6 +134,7 @@ int main(){
 			continue;
 		} else {
 			a = key;
+			clear_res();
 			lcd_set_position(0, A_INDEX);
 			lcd_print_num(a);
 		}
@@ -156,12 +157,11 @@ int main(){
 			continue;
 		} else {
 			op = key;
+			clear_res();
 			lcd_set_position(0, OP_INDEX);
 			lcd_write_data(op);
 		}
 
-		
-		
 		lcd_set_position(0, B_INDEX);
 		// get valid input for operand b, or clear result/enter
 		valid = 0;
@@ -180,18 +180,17 @@ int main(){
 			continue;
 		} else {
 			b = key;
+			clear_res();
 			lcd_set_position(0, B_INDEX);
 			lcd_print_num(b);
 		}
-
 	}
-
 	// Never returns
 	return 0;
 }
 
-static uint8_t calculate(uint8_t a, uint8_t op, uint8_t b) {
-	uint8_t res = 0;
+static int calculate(uint8_t a, uint8_t op, uint8_t b) {
+	int res = 0;
 	switch (op) {
 		case '+':
 			res = a + b;
@@ -203,7 +202,17 @@ static uint8_t calculate(uint8_t a, uint8_t op, uint8_t b) {
 			res = a * b;
 			break;
 		case '/':
-			res = a / b;
+			if (b == 0) {
+				lcd_clear();
+				lcd_print_string("Undef. Press any");
+				lcd_set_position(1, 0);
+				lcd_print_string("key to continue");
+				key_getKey();
+				lcd_clear();
+				lcd_print_string(TEMPLATE);
+			} else {
+				res = a / b;
+			}
 			break;
 		default:
 			printf("invalid Operation.\n");
@@ -220,59 +229,11 @@ static void clear_res() {
 
 static void enter() {
 	lcd_set_position(0, RES_INDEX);
+	lcd_print_string("  ");
+	lcd_set_position(0, RES_INDEX);
 	res = calculate(a, op, b);
-	sprintf(result, "%d", res);
-	lcd_print_string(result);
+	if (!(op == '/' && b == 0)) {
+		sprintf(result, "%d", res);
+		lcd_print_string(result);
+	} 
 }
-
-// valid = 0;
-// 		lcd_set_position(0, A_INDEX);
-
-// 		while (!valid) {
-// 			a = key_getKey();
-// 			if (a < 10) {
-// 				valid = 1;
-// 			}
-// 		}
-// 		lcd_print_num(a);
-
-// 		op = 0;
-// 		lcd_set_position(0, OP_INDEX);
-// 		while (op != '+' && op != '-' && op != 'x' && op != '/') {
-// 			key = key_getKey();
-// 			op = OP_MAP[key];
-// 		}
-// 		lcd_write_data(op);
-
-// 		valid = 0;
-// 		lcd_set_position(0, B_INDEX);
-// 		while (!valid) {
-// 			b = key_getKey();
-// 			if (a < 10) {
-// 				valid = 1;
-// 			}
-// 		}
-// 		lcd_print_num(b);
-
-// 		switch (op) {
-// 			case '+':
-// 				res = a + b;
-// 				break;
-// 			case '-':
-// 				res = a - b;
-// 				break;
-// 			case 'x':
-// 				res = a * b;
-// 				break;
-// 			case '/':
-// 				res = a / b;
-// 				break;
-// 			default:
-// 				printf("invalid Operation.\n");
-// 				break;
-// 		}
-
-// 		lcd_set_position(0, RES_INDEX);
-// 		sprintf(result, "%d", res);
-// 		lcd_print_string(result);
-// 		lcd_home();
