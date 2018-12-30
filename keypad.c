@@ -15,21 +15,14 @@
 
 // Pointers to the GPIO structures
 static volatile GPIO* GPIOC = 0x40020800;
-static volatile GPIO* GPIOA = 0x40020000;
 
-static uint8_t findPosition(uint8_t n);
+
 static const uint8_t CHAR_MAP[] = {'0', '1', '2', '3', 'A', '4', '5', '6', 'B', '7',
                           '8', '9', 'C', '*', '0', '#', 'D'};
 static const uint8_t KEY_MAP[] = {0, 1, 2, 3, 10, 4, 5, 6, 11, 7, 8, 9, 12, 14, 0, 15, 13};
 
-// Lookup table to reverse bits, since keypad pins are big endian 
-static const uint8_t LOOKUP[16] = {
-        0x0, 0x8, 0x4, 0xc,
-        0x2, 0xa, 0x6, 0xe,
-        0x1, 0x9, 0x5, 0xd,
-        0x3, 0xb, 0x7, 0xf
-        };
-
+// File scope helper methods
+static uint8_t findPosition(uint8_t n);
 
 void key_init() {
     // Enable GPIOC in RCC_AHB1ENR
@@ -60,7 +53,7 @@ uint8_t key_getKey_noBlock() {
         GPIOC->MODER = (GPIOC->MODER & ~0x0000FFFF) | 0x00005500;
         delay_1us(5);
         col = (GPIOC->IDR & 0xF);
-        // adjust for active low and get its the actual row and col position
+        // adjust for active low and get its the actual row and col position (0 indexed)
         row = findPosition(row ^ 0xF) - 1;
         col = findPosition(col ^ 0xF) - 1;
         keyPressed = (row * ROW_COUNT + col);
@@ -68,7 +61,7 @@ uint8_t key_getKey_noBlock() {
     // Flip MODER back 
     GPIOC->MODER = (GPIOC->MODER & ~0x0000FFFF) | 0x00000055;
     delay_1ms(18);
-   return keyPressed + 1;
+   return keyPressed + 1; // 1 indexed
 }
 
 uint8_t key_getKey() {

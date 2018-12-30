@@ -19,11 +19,9 @@
 static volatile GPIO* GPIOC = 0x40020800;
 static volatile GPIO* GPIOA = 0x40020000;
 
-//// Maintain current cursor position from 0 - 31
-//static uint8_t currentPosition = 0;
-
 static const uint8_t LCD_WIDTH = 40;
 
+// File-dcope helper methods
 static void lcd_wait_for_not_busy();
 static void lcd_write_instr_not_busy(uint32_t instr);
 static void lcd_print_char(char c);
@@ -41,7 +39,6 @@ void lcd_init() {
 
     // init lcd 
     delay_1ms(40);
-
     lcd_write_instr_not_busy(0x38);  // 8-bit bus, 2-line display, 5x8 font
     lcd_write_instr_not_busy(0x38);  // Reference manual specifies repeating twice
     lcd_write_instr(0xF);            // Display on, cursor on, cursor blinking 
@@ -112,15 +109,11 @@ static void lcd_wait_for_not_busy() {
     delay_1us(1);
     GPIOC->BSRR = (1 << (E + 16));
 
-
     // Wait for not busy
 	uint32_t busyFlag = 1;
     while (busyFlag == 1) {
         busyFlag = GPIOA->IDR & (1 << DB7);
     }
-
-    // // Reset E 
-    // GPIOC->BSRR |= (1 << (E + 16));
 }
 
 static void lcd_write_instr_not_busy(uint32_t instr) {
@@ -131,7 +124,6 @@ static void lcd_write_instr_not_busy(uint32_t instr) {
     GPIOC->BSRR = (1 << E);
     delay_1us(1);
     GPIOC->BSRR = (1 << (E + 16));
-    // GPIOA->BSRR |= (0xFF << DB0); // for check busy flag ---- specified in manual but doesnt work
     delay_1us(40);
 }
 
@@ -143,7 +135,6 @@ static void lcd_write_data_not_busy(uint32_t data) {
     GPIOC->BSRR = (1 << E);
     delay_1us(1);
     GPIOC->BSRR = (1 << (E + 16));
-    // GPIOA->BSRR |= (0xFF << DB0); // for check busy flag ---- specified in manual but doesnt work
     delay_1us(40);
 }
 
@@ -155,6 +146,5 @@ static void lcd_print_char(char c) {
     GPIOC->BSRR = (1 << E);
     delay_1us(1);
     GPIOC->BSRR = (1 << (E + 16));
-    // GPIOA->BSRR |= (0xFF << DB0); // for check busy flag ---- specified in manual but doesnt work
     delay_1us(40);
 }

@@ -5,7 +5,7 @@
  */
 
 #include <inttypes.h>
-#include "delay.h"  //include declaration header file
+#include "delay.h"  
 
 void delay_1ms(uint32_t n){
 	for (int i = 0; i < n; i++) {

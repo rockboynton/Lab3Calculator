@@ -50,6 +50,7 @@ uint8_t op = '+';
 // Result
 int res;
 
+// Result string
 uint8_t result[2];
 
 // Valid flag
@@ -72,9 +73,6 @@ int main(){
 	led_init();
 	lcd_init();
 	key_init();
-
-	uint8_t key;
-
 
 	// --------------------- KEYPAD TEST CODE -------------------
 	if (DEBUG == 2) {
@@ -111,7 +109,6 @@ int main(){
 	}
 	// -------------------------------------------------------------
 
-
 	// Main program 
 	// Never return
 	lcd_print_string(TEMPLATE);
@@ -125,7 +122,7 @@ int main(){
 				valid = 1;
 			}
 		}
-		// a is valid
+		// key is valid
 		if (key == '*') { 
 			clear_res();
 			continue;
@@ -148,7 +145,7 @@ int main(){
 				valid = 1;
 			}
 		}
-		// op is valid
+		// key is valid
 		if (key == '*') { 
 			clear_res();
 			continue;
@@ -171,7 +168,7 @@ int main(){
 				valid = 1;
 			}
 		}
-		// b is valid
+		// key is valid
 		if (key == '*') { 
 			clear_res();
 			continue;
@@ -189,6 +186,7 @@ int main(){
 	return 0;
 }
 
+// File scope helper methods
 static int calculate(uint8_t a, uint8_t op, uint8_t b) {
 	int res = 0;
 	switch (op) {
