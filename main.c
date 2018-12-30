@@ -41,7 +41,7 @@ int main(){
 	static const uint8_t RES_INDEX = 8;
 	static const uint8_t KEY_MAP[] = {
 		0,1,2,3,4,5,6,7,8,9,
-		'+','-','x','/','*','#',0 // Key A->+, Key B->-, Key C->x, Key D->/
+		'+','-','x','/','*','#',0 // Key A->+, Key B-> -, Key C->x, Key D->/
 		};
 
 	// Operands
@@ -110,34 +110,44 @@ int main(){
 	// Never return
 	lcd_print_string(TEMPLATE);
 	while (1) {
-		valid = 0; 
+		lcd_set_position(0, A_INDEX);
+		valid = 0;
+		// get valid input for operand a, or clear result/enter
 		while (!valid) {
-			key = KEY_MAP[key_getKey()];
+			a = key_getKey();
+			if (a < 10 || a == '*' || a == '#') {
+				valid = 1;
+			}
 		}
-		switch (key) {
-			case '*':
-				lcd_set_position(0, RES_INDEX);
-				lcd_print_string("__");
-				lcd_home();
-				break;
-			case '#':
-				calculate
-				break;
-			case '+':
-				
-				break;
-			case '-':
-				
-				break;
-			case 'x':
-				
-				break;
-			case '/':
-				
-				break;
-			default:
-				printf("invalid Operation.\n");
-				break;
+		// a is valid
+		if (a == '*') { 
+			clear_res();
+			continue;
+		} else if (a == '#') {
+			enter();
+			continue;
+		} else {
+			lcd_set_position(0, A_INDEX);
+			lcd_print_num(a);
+		}
+		// get valid input for operator, or clear result/enter
+		valid = 0;
+		while (!valid) {
+			b = key_getKey();
+			if (b < 10 || a == '*' || a == '#') {
+				valid = 1;
+			}
+		}
+		// b is valid
+		if (b == '*') { 
+			clear_res();
+			continue;
+		} else if (b == '#') {
+			enter();
+			continue;
+		} else {
+			lcd_set_position(0, OP_INDEX);
+			lcd_print_num();
 		}
 	}
 
@@ -165,6 +175,19 @@ static uint8_t calculate(uint8_t a, uint8_t op, uint8_t b) {
 			break;
 	}
 	return res;
+}
+
+static uint8_t clear_res() {
+	lcd_set_position(0, RES_INDEX);
+	lcd_print_string("__");
+	lcd_home();
+}
+
+static uint8_t enter() {
+	lcd_set_position(0, RES_INDEX);
+	res = calculate(a, op, b);
+	sprintf(result, "%d", res);
+	lcd_print_string(result);
 }
 
 // valid = 0;
